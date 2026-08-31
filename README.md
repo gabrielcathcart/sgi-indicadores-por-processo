@@ -53,7 +53,6 @@ institucionais**.
   [`docs/metric_definitions.md`](./docs/metric_definitions.md).
 - **BI:** Apache Superset, entregue como **especificação construtível + mockups**,
   não como integração automatizada — ver [`docs/dashboard.md`](./docs/dashboard.md).
-- **Retorno em ≤ 72 h:** análise **exploratória**, não um KPI central.
 - Os valores de referência de tempo são de **simulação** — servem para demonstrar
   o cálculo de "% acima da referência", não são metas institucionais.
 
