@@ -1,0 +1,63 @@
+name: "sgi_urgencia"
+version: "1.0.0"
+config-version: 2
+
+# Projeto dbt-core + dbt-duckdb — camada de transformacao da jornada de
+# atendimentos de urgencia. Pipeline unico: os CSVs sinteticos em data/synthetic/
+# sao carregados como seeds; staging -> intermediate -> marts -> analytics.
+# Nenhuma transformacao vive fora do dbt.
+
+profile: "sgi_urgencia"
+
+model-paths: ["models"]
+seed-paths: ["seeds", "data/synthetic"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+  - "logs"
+
+vars:
+  # --- Parametros analiticos (fonte humana: docs/parametros.md) --------------
+  # Convencao deste portfolio, NAO regra clinica/regulatoria/institucional.
+  idade_corte_pediatrico_anos: 18
+  # Janela do retorno em <=72h (analise complementar, nao KPI principal).
+  retorno_janela_horas: 72
+  # Criterio de OUTLIER de tempo, configuravel:
+  #   metodo "iqr" -> valor > Q3 + (outlier_iqr_k * IQR), calculado por indicador
+  #                   sobre registros validos (elegivel e sem sequencia invalida).
+  #   metodo "meta" -> valor > (outlier_cap_mult * meta_demo_min) do indicador.
+  outlier_metodo: "iqr"
+  outlier_iqr_k: 3
+  outlier_cap_mult: 6
+  # Cap operacional de sanidade (min): porta -> desfecho acima disso e outlier.
+  outlier_los_max_min: 2880   # 48h
+
+seeds:
+  sgi_urgencia:
+    +schema: raw
+    +quote_columns: false
+    dim_manchester:
+      +schema: seeds
+    metas_demo:
+      +schema: seeds
+
+models:
+  sgi_urgencia:
+    +persist_docs:
+      relation: true
+      columns: true
+    staging:
+      +materialized: view
+      +schema: staging
+    intermediate:
+      +materialized: view
+      +schema: intermediate
+    marts:
+      +materialized: table
+      +schema: marts
+    analytics:
+      +materialized: view
+      +schema: analytics

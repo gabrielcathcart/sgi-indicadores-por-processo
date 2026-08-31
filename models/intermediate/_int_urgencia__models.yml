@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: int_urgencia__eventos_pivot
+    description: >
+      Log de eventos pivotado para 1 linha por atendimento (um timestamp por
+      tipo de evento) + contagem por tipo e flag de evento duplicado.
+    columns:
+      - name: atendimento_id
+        data_tests: [not_null, unique]
+      - name: flag_evento_duplicado
+        data_tests: [not_null]
+
+  - name: int_urgencia__tempos
+    description: >
+      Tempos de processo por atendimento (7 indicadores nomeados, em minutos) +
+      por indicador: flag_sequencia_invalida_<ind>, flag_elegivel_<ind>,
+      flag_outlier_<ind>. Mais flags de jornada: flag_jornada_temporal_invalida,
+      flag_timestamp_incompleto, flag_divergencia_eventos, flag_evento_duplicado.
+    columns:
+      - name: atendimento_id
+        data_tests: [not_null, unique]
+      - name: flag_jornada_temporal_invalida
+        data_tests: [not_null]
+      - name: flag_timestamp_incompleto
+        data_tests: [not_null]
+
+  - name: int_urgencia__retorno_72h
+    description: >
+      Analise COMPLEMENTAR de retorno em <=72h. flag_retorno_72h = este episodio
+      e um retorno; flag_indice_com_retorno_72h = este episodio-indice foi
+      seguido por um retorno; horas_ate_retorno = horas ate a proxima entrada do
+      mesmo paciente (quando ha indice avaliavel).
+    columns:
+      - name: atendimento_id
+        data_tests: [not_null, unique]
+      - name: flag_retorno_72h
+        data_tests: [not_null]
+      - name: flag_indice_com_retorno_72h
+        data_tests: [not_null]
+
+  - name: int_urgencia__tempos_long
+    description: >
+      Formato LONGO dos 7 indicadores de tempo: 1 linha por (atendimento x
+      indicador), com valor_min, dimensoes de calendario/segmentacao,
+      aplicabilidade (TODOS/IMAGEM/INTERNACAO) e as flags por indicador
+      (aplicavel, elegivel, sequencia_invalida, outlier, acima_meta_demo).
+      Fonte unica dos modelos analytics de tempos.
+    columns:
+      - name: atendimento_id
+        data_tests: [not_null]
+      - name: indicador
+        data_tests: [not_null]
+      - name: flag_elegivel
+        data_tests: [not_null]

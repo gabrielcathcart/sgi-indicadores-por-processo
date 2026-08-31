@@ -1,0 +1,8 @@
+indicador,meta_demo_min,tipo_referencia,observacao
+tempo_entrada_triagem,15,referencia_de_simulacao,Retirada de senha ate o inicio da triagem
+tempo_triagem,10,referencia_de_simulacao,Duracao da triagem
+tempo_triagem_consulta,60,referencia_de_simulacao,Fim da triagem ate o inicio da consulta
+tempo_consulta,45,referencia_de_simulacao,Abertura da evolucao ate a prescricao
+tempo_solicitacao_realizacao_imagem,90,referencia_de_simulacao,Solicitacao ate a realizacao do exame de imagem
+tempo_reavaliacao,60,referencia_de_simulacao,Realizacao da imagem ate a conduta clinica
+tempo_finalizacao_aih_internacao,360,referencia_de_simulacao,Finalizacao da AIH ate a internacao efetiva no leito

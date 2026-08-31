@@ -1,0 +1,22 @@
+# Modelo de perfil dbt para este projeto. NÃO contém caminho absoluto,
+# credencial ou dado pessoal.
+#
+# Como usar (uma das opções):
+#   1) Copie para um profiles.yml local (ignorado pelo Git):
+#        cp profiles.yml.example profiles.yml
+#        dbt build --profiles-dir .
+#   2) Ou aponte o dbt para este diretório via variável de ambiente:
+#        export DBT_PROFILES_DIR="$PWD"        # (Windows PowerShell: $env:DBT_PROFILES_DIR = $PWD)
+#        cp profiles.yml.example profiles.yml
+#
+# O banco DuckDB é um arquivo local dentro de target/ (ignorado pelo Git).
+# Ajuste o caminho com a variável DBT_DUCKDB_PATH se quiser.
+
+sgi_urgencia:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('DBT_DUCKDB_PATH', 'target/sgi_urgencia.duckdb') }}"
+      schema: main
+      threads: 4

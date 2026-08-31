@@ -1,0 +1,130 @@
+version: 2
+
+models:
+  - name: agg_urgencia__admissoes_dia
+    description: >
+      Aba 1. Grao: data_entrada x data_referencia x periodo_admissao x
+      procedencia. Volume de admissoes (COUNT DISTINCT atendimento_id),
+      internacao, imagem, desfechos e boarding pos-AIH. Referencia temporal
+      oficial do volume: data_entrada.
+    columns:
+      - name: data_entrada
+        data_tests: [not_null]
+      - name: qt_admissoes
+        data_tests: [not_null]
+
+  - name: agg_urgencia__heatmap_semana_hora
+    description: "Aba 1. Mapa de calor de admissoes por dia da semana x hora da retirada de senha."
+    columns:
+      - name: dia_semana_iso
+        data_tests: [not_null]
+      - name: hora_retirada_senha
+        data_tests: [not_null]
+
+  - name: agg_urgencia__perfil_demografico
+    description: "Aba 2. Grao: faixa etaria x sexo x Manchester. Ordem de criticidade preservada."
+    columns:
+      - name: manchester_ordem_criticidade
+        data_tests: [not_null]
+      - name: qt_atendimentos
+        data_tests: [not_null]
+
+  - name: agg_urgencia__desfecho_dia
+    description: >
+      Aba 3. Desfechos de urgencia ao longo do tempo. Grao: data_desfecho x
+      data_referencia x desfecho_urgencia. data_desfecho e NULL para
+      'Nao informado/Em Atendimento' (essas linhas ficam fora da serie por data
+      de desfecho; acompanhar por data_referencia como pendencia de registro).
+    columns:
+      - name: desfecho_urgencia
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["Internado", "Liberado", "Evasao", "Obito", "Alta a Pedido",
+                         "Nao informado/Em Atendimento", "Transferido de Hospital"]
+
+  - name: agg_urgencia__desfecho_manchester
+    description: "Aba 3. Composicao de desfecho por Manchester e faixa etaria."
+    columns:
+      - name: pct_no_grupo
+        data_tests: [not_null]
+
+  - name: agg_urgencia__internacao_especialidade
+    description: "Aba 3. Internacoes por especialidade e mes, com boarding pos-AIH. Populacao: desfecho_urgencia = 'Internado'."
+    columns:
+      - name: qt_internacoes
+        data_tests: [not_null]
+
+  - name: agg_urgencia__tempos
+    description: >
+      Aba 4 (VSM) - Visual A (tabela de KPIs). Grao: indicador x
+      classificacao_manchester (+ linha 'Todos'). n_aplicavel, n_elegivel,
+      cobertura_pct, mediana, P75/P90/P95, media, min/max, qt_outlier,
+      pct_outlier, mediana_sem_outlier, meta_demo_min (valor de referencia de
+      simulacao) e a visao COMPLEMENTAR "% acima do valor de referencia".
+      aplicabilidade / obs_elegibilidade descrevem a populacao elegivel de cada
+      indicador.
+    columns:
+      - name: indicador
+        data_tests: [not_null]
+      - name: indicador_ordem
+        data_tests: [not_null]
+      - name: classificacao_manchester
+        data_tests: [not_null]
+      - name: obs_elegibilidade
+        data_tests: [not_null]
+
+  - name: agg_urgencia__tempos_tendencia
+    description: >
+      Aba 4 - Visual B (tendencia). Grao: granularidade ('Semana'/'Mes') x
+      periodo_ref x indicador x segmento ('Geral'/'Periodo'/'Manchester'/
+      'Procedencia'/'Especialidade') x segmento_valor. So elegiveis nos
+      percentis; media NAO e exposta. Filtrar UMA dimensao de segmento por vez.
+    columns:
+      - name: indicador
+        data_tests: [not_null]
+      - name: granularidade
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: { values: ["Semana", "Mes"] }
+      - name: segmento
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: { values: ["Geral", "Periodo", "Manchester", "Procedencia", "Especialidade"] }
+
+  - name: agg_urgencia__tempos_evento
+    description: >
+      Aba 4 - Visual C (distribuicao). Grao: 1 linha por (atendimento x
+      indicador), APENAS registros elegiveis. Fonte de consumo para boxplot /
+      histograma. valor_min nunca negativo nem zero-por-ausencia.
+    columns:
+      - name: atendimento_id
+        data_tests: [not_null]
+      - name: valor_min
+        data_tests: [not_null]
+      - name: indicador
+        data_tests: [not_null]
+
+  - name: agg_urgencia__retorno_72h
+    description: >
+      COMPLEMENTAR — nao KPI principal. Retorno em <=72h por mes. So capta
+      retornos deste dataset sintetico; nao e readmissao clinica validada; nao
+      ve retorno em outra instituicao.
+    columns:
+      - name: mes_referencia
+        data_tests: [not_null, unique]
+
+  - name: dq_urgencia__resumo
+    description: "Relatorio de qualidade de dados: contagem e % por metrica."
+    columns:
+      - name: metrica
+        data_tests: [not_null, unique]
+
+  - name: dq_urgencia__cobertura_timestamps
+    description: "Taxa de completude por timestamp do funil (esperado desconsidera etapas nao aplicaveis)."
+    columns:
+      - name: campo_timestamp
+        data_tests: [not_null, unique]

@@ -1,0 +1,7 @@
+classificacao_manchester,manchester_ordem_criticidade,cor_hex,cor_nome,observacao
+Vermelho,1,#C0392B,vermelho,Emergencia - atendimento imediato.
+Laranja,2,#E67E22,laranja,Muito urgente.
+Amarelo,3,#F1C40F,amarelo,Urgente.
+Verde,4,#27AE60,verde,Pouco urgente.
+Azul,5,#2980B9,azul,Nao urgente.
+Branco,6,#D5D8DC,cinza-claro,Categoria parametrizada NESTE projeto (ex.: sem queixa aguda / fluxo administrativo). Uso pode variar conforme o fluxo institucional; sem aplicacao universal. Renderizar com borda #7F8C8D e texto escuro para contraste.

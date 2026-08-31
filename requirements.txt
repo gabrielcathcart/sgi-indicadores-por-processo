@@ -1,0 +1,17 @@
+# Dependências de desenvolvimento — pipeline local reproduzível.
+# Instale em um ambiente virtual:
+#   python -m venv .venv && . .venv/Scripts/activate   (Windows)
+#   python -m venv .venv && source .venv/bin/activate  (Linux/macOS)
+#   pip install -r requirements.txt
+#
+# Nota de compatibilidade: este ambiente usa Python 3.14, para o qual a linha
+# suportada do dbt-core é a 1.12.x (as linhas LTS anteriores não publicam
+# wheels cp314). Ajuste os pins se usar outra versão de Python.
+
+dbt-core==1.12.3
+dbt-duckdb==1.11.0
+duckdb==1.5.5
+
+# Geração de dados sintéticos e das figuras de referência.
+pandas>=2.2
+matplotlib>=3.8

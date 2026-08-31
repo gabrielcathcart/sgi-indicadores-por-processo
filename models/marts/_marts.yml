@@ -1,0 +1,69 @@
+version: 2
+
+models:
+  - name: fct_urgencia_atendimentos
+    description: >
+      FATO PRINCIPAL — exatamente 1 linha por atendimento/episodio de urgencia.
+      Dataset certificado para o Superset; base das 4 abas. Dados 100%
+      sinteticos; janela de entrada fechada 2025-01-01 a 2025-06-30.
+      Contem: dimensoes analiticas, timestamps do funil, os 7 indicadores de
+      tempo (minutos), e por indicador flag_elegivel_/flag_sequencia_invalida_/
+      flag_outlier_/flag_acima_meta_demo_, alem de flags de jornada
+      (flag_jornada_temporal_invalida, flag_timestamp_incompleto,
+      flag_divergencia_eventos, flag_evento_duplicado) e de retorno <=72h.
+    columns:
+      - name: atendimento_id
+        description: "Grao do fato. Unico e nao nulo."
+        data_tests: [not_null, unique]
+      - name: paciente_id_pseudonimo
+        description: "Chave sintetica de paciente. Nao reidentifica."
+        data_tests: [not_null]
+      - name: data_referencia
+        data_tests: [not_null]
+      - name: classificacao_manchester
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: { values: ["Vermelho", "Laranja", "Amarelo", "Verde", "Azul", "Branco"] }
+      - name: manchester_ordem_criticidade
+        description: "1=Vermelho ... 6=Branco. Ordenar SEMPRE por esta coluna, nunca alfabetico."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: { values: [1, 2, 3, 4, 5, 6], quote: false }
+      - name: manchester_cor_hex
+        data_tests: [not_null]
+      - name: classificacao_faixa_etaria
+        data_tests:
+          - accepted_values:
+              arguments: { values: ["Pediatrico", "Adulto"] }
+      - name: procedencia
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["Demanda Espontanea", "Atendimento Primario", "UPA/CRS", "Interior", "Hospital"]
+      - name: sexo
+        data_tests:
+          - accepted_values:
+              arguments: { values: ["Masculino", "Feminino"] }
+      - name: desfecho_urgencia
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["Internado", "Liberado", "Evasao", "Obito", "Alta a Pedido",
+                         "Nao informado/Em Atendimento", "Transferido de Hospital"]
+      - name: periodo_admissao
+        data_tests:
+          - accepted_values:
+              arguments: { values: ["Madrugada", "Manha", "Tarde", "Noite"] }
+      - name: flag_internado
+        data_tests: [not_null]
+      - name: flag_timestamp_incompleto
+        data_tests: [not_null]
+      - name: flag_jornada_temporal_invalida
+        data_tests: [not_null]
+      - name: tempo_finalizacao_aih_internacao_min
+        description: "Boarding pos-AIH: finalizacao da AIH -> internacao efetiva. So desfecho Internado."
+      - name: tempo_consulta_min
+        description: "Abertura da evolucao -> prescricao."

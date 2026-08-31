@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+
+# Dados locais gerados fora do fluxo padrão (evita subir volumes grandes por engano)
+data/synthetic/*.tmp.csv
+*.duckdb
+
+# dbt
+target/
+dbt_packages/
+logs/
+.user.yml
+# Perfil local do dbt — versionar apenas profiles.yml.example
+profiles.yml
+
+# Extrato(s) real(is) de referência — nunca versionar (LGPD, dado sensível de saúde)
+data/reference/

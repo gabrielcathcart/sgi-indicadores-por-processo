@@ -1,0 +1,153 @@
+version: 2
+
+seeds:
+  # ------------------------------------------------------------------------
+  # Dados sinteticos brutos da jornada de urgencia (data/synthetic/).
+  # ------------------------------------------------------------------------
+  - name: urgencia_episodios_raw
+    description: >
+      Camada bruta sintetica. Grao: 1 linha por atendimento/episodio de urgencia.
+      Gerado por scripts/gerar_urgencia_sintetico.py (deterministico, seed fixa).
+      Janela de ENTRADA fechada: 2025-01-01 a 2025-06-30. 100% ficticio.
+    config:
+      column_types:
+        atendimento_id: integer
+        paciente_id_pseudonimo: varchar
+        dt_retirada_senha: timestamp
+        dt_entrada: timestamp
+        dt_inicio_triagem: timestamp
+        dt_fim_triagem: timestamp
+        dt_inicio_consulta: timestamp
+        dt_abertura_evolucao: timestamp
+        dt_prescricao: timestamp
+        dt_solicitacao_imagem: timestamp
+        dt_realizacao_imagem: timestamp
+        dt_conduta: timestamp
+        dt_solicitacao_internacao: timestamp
+        dt_finalizacao_aih: timestamp
+        dt_internacao_efetiva: timestamp
+        dt_desfecho: timestamp
+        idade_anos: integer
+        manchester_ordem_criticidade: integer
+        possui_imagem: boolean
+        possui_internacao: boolean
+        flag_dado_incompleto: boolean
+    columns:
+      - name: atendimento_id
+        description: Identificador sintetico do episodio. Unico.
+        data_tests: [not_null, unique]
+      - name: paciente_id_pseudonimo
+        description: >
+          Chave de paciente INTEIRAMENTE sintetica (PAC + contador). Estavel
+          entre episodios do mesmo paciente sintetico. Nao deriva de nome/CPF/
+          prontuario; nao reidentifica.
+        data_tests: [not_null]
+      - name: classificacao_manchester
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["Vermelho", "Laranja", "Amarelo", "Verde", "Azul", "Branco"]
+      - name: manchester_ordem_criticidade
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: { values: [1, 2, 3, 4, 5, 6], quote: false }
+      - name: procedencia
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["Demanda Espontanea", "Atendimento Primario", "UPA/CRS", "Interior", "Hospital"]
+      - name: sexo
+        data_tests:
+          - accepted_values:
+              arguments: { values: ["Masculino", "Feminino"] }
+      - name: classificacao_faixa_etaria
+        data_tests:
+          - accepted_values:
+              arguments: { values: ["Pediatrico", "Adulto"] }
+      - name: periodo_admissao
+        data_tests:
+          - accepted_values:
+              arguments: { values: ["Madrugada", "Manha", "Tarde", "Noite"] }
+      - name: desfecho_urgencia
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["Internado", "Liberado", "Evasao", "Obito", "Alta a Pedido",
+                         "Nao informado/Em Atendimento", "Transferido de Hospital"]
+
+  - name: urgencia_eventos_raw
+    description: >
+      Camada bruta sintetica. Grao: 1 linha por evento operacional por
+      atendimento. Permite auditar timestamps, sequencias e reconstruir a jornada.
+    config:
+      column_types:
+        evento_id: integer
+        atendimento_id: integer
+        dt_evento: timestamp
+        sequencia_evento: integer
+        flag_timestamp_estimado: boolean
+    columns:
+      - name: evento_id
+        data_tests: [not_null, unique]
+      - name: atendimento_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: { to: ref('urgencia_episodios_raw'), field: atendimento_id }
+      - name: tipo_evento
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["retirada_senha", "entrada_urgencia", "inicio_triagem", "fim_triagem",
+                         "inicio_consulta", "abertura_evolucao", "prescricao", "solicitacao_imagem",
+                         "realizacao_imagem", "conduta", "solicitacao_internacao", "finalizacao_aih",
+                         "internacao_efetiva", "desfecho"]
+
+  # ------------------------------------------------------------------------
+  # Referencia / parametros.
+  # ------------------------------------------------------------------------
+  - name: dim_manchester
+    description: >
+      Dimensao do Protocolo de Manchester com a ORDEM DE CRITICIDADE persistida
+      (1=Vermelho ... 6=Branco) e a paleta semantica. Ver docs/parametros.md.
+    config:
+      column_types:
+        manchester_ordem_criticidade: integer
+    columns:
+      - name: classificacao_manchester
+        data_tests: [not_null, unique]
+      - name: manchester_ordem_criticidade
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: { values: [1, 2, 3, 4, 5, 6], quote: false }
+      - name: cor_hex
+        data_tests: [not_null]
+
+  - name: metas_demo
+    description: >
+      Valores de REFERENCIA DE SIMULACAO por indicador de tempo, usados apenas
+      para demonstrar o calculo de "% acima do valor de referencia". Nao sao
+      SLA, contrato, protocolo nem meta institucional. Em producao, referencias
+      e metas precisam ser pactuadas com a operacao. Fonte humana:
+      docs/parametros.md.
+    config:
+      column_types:
+        meta_demo_min: integer
+    columns:
+      - name: indicador
+        data_tests: [not_null, unique]
+      - name: meta_demo_min
+        data_tests: [not_null]
+      - name: tipo_referencia
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: { values: ["referencia_de_simulacao"] }
+      - name: observacao
+        data_tests: [not_null]

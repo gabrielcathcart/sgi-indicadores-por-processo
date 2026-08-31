@@ -1,0 +1,93 @@
+# catalog.yaml
+# -----------------------------------------------------------------------------
+# Catalogo das quatro figuras de referencia (mockups) do dashboard "Jornada de
+# Urgencia". Liga cada figura a aba, ao(s) modelo(s) dbt de origem e a
+# especificacao.
+#
+# Gerado por: scripts/gerar_graficos.py  (le os modelos ja materializados por
+#             `dbt build` em target/sgi_urgencia.duckdb; nao transforma dado)
+# Dados: data/synthetic/urgencia_*_raw.csv (sinteticos)
+# Especificacao: docs/dashboard.md
+#
+# Paleta:
+#   - roxo  = identidade visual geral (titulos, layout, serie unica sem
+#             significado semantico)
+#   - sexo  = Masculino #2563EB · Feminino #EC4899 · Nao informado #94A3B8
+#   - Manchester = cores semanticas de seeds/dim_manchester.csv (nao alteradas)
+#   - tempos = mediana #7C3AED · P90 #EA580C · P95 #B91C1C · cobertura #16A34A
+#   - desfecho/procedencia = paleta categorica sobria, mesma cor por categoria
+#     nos quatro mockups, sem reutilizar cores de Manchester
+# -----------------------------------------------------------------------------
+
+- id: entrada_capacidade
+  aba: "1 - Entrada e Capacidade"
+  titulo: "Admissoes de urgencia · distribuicao por dia e hora"
+  descricao: >
+    Admissoes de urgencia por semana e periodo de admissao (esquerda) e
+    distribuicao das retiradas de senha por dia da semana e hora (direita).
+    Sem metrica de ocupacao ou capacidade de leito.
+  modelos_dbt:
+    - analytics.agg_urgencia__admissoes_dia
+    - analytics.agg_urgencia__heatmap_semana_hora
+  imagem: assets/mockups/entrada_capacidade.png
+  tipo: mockup
+  gerado_por: scripts/gerar_graficos.py
+
+- id: perfil
+  aba: "2 - Perfil"
+  titulo: "Perfil dos atendimentos · classificacao de risco por semana"
+  descricao: >
+    Perfil dos atendimentos por faixa etaria e sexo (esquerda) e classificacao
+    de Manchester por semana, barra empilhada, cores semanticas, ordem de
+    criticidade preservada (direita). O corte etario esta em docs/parametros.md.
+  modelos_dbt:
+    - analytics.agg_urgencia__perfil_demografico
+    - marts.fct_urgencia_atendimentos
+  imagem: assets/mockups/perfil.png
+  tipo: mockup
+  gerado_por: scripts/gerar_graficos.py
+
+- id: desfecho
+  aba: "3 - Desfecho"
+  titulo: "Desfechos por semana · internacoes por especialidade"
+  descricao: >
+    Desfechos por semana com data de desfecho (esquerda; "Em Atendimento" nao
+    tem data e fica fora da serie) e internacoes por especialidade a partir de
+    atendimentos com desfecho de internacao (direita).
+  modelos_dbt:
+    - analytics.agg_urgencia__desfecho_dia
+    - analytics.agg_urgencia__internacao_especialidade
+    - analytics.agg_urgencia__desfecho_manchester
+  imagem: assets/mockups/desfecho.png
+  tipo: mockup
+  gerado_por: scripts/gerar_graficos.py
+
+- id: tempos_processo
+  aba: "4 - Tempos de Processo"
+  titulo: "Tempos de processo · mediana, P90 e P95"
+  descricao: >
+    Mediana, P90 e P95 de cada um dos sete indicadores de tempo, sobre episodios
+    elegiveis, com a cobertura ao lado. Inclui o tempo apos a finalizacao da AIH
+    ate a internacao efetiva (definicao de modelagem deste case). Escala
+    logaritmica.
+  modelos_dbt:
+    - analytics.agg_urgencia__tempos
+    - analytics.agg_urgencia__tempos_tendencia
+    - analytics.agg_urgencia__tempos_evento
+  ficha_tecnica: indicadores/ficha_boarding.md
+  imagem: assets/mockups/tempos_processo.png
+  tipo: mockup
+  gerado_por: scripts/gerar_graficos.py
+
+# Complementar (nao e uma aba do dashboard):
+- id: retorno_72h
+  aba: "complementar / qualidade"
+  titulo: "Retorno em ate 72h por mes"
+  descricao: >
+    Metrica complementar, exploratoria. So capta retornos deste dataset
+    sintetico; nao e readmissao clinica validada; nao ve retorno em outra
+    instituicao. Sem figura dedicada.
+  modelos_dbt:
+    - analytics.agg_urgencia__retorno_72h
+  imagem: null
+  tipo: sem_figura

@@ -1,0 +1,76 @@
+version: 2
+
+models:
+  - name: stg_urgencia__episodios
+    description: >
+      Episodios de urgencia tipados e padronizados, com campos de calendario
+      (dia da semana, mes/semana de referencia, hora) e a faixa etaria analitica
+      re-derivada do parametro (idade < 18 = Pediatrico). Grao: 1 linha por
+      atendimento_id.
+    columns:
+      - name: atendimento_id
+        data_tests: [not_null, unique]
+      - name: paciente_id_pseudonimo
+        data_tests: [not_null]
+      - name: data_referencia
+        description: Data (calendario) da retirada de senha. Janela fechada 2025-01-01 a 2025-06-30.
+        data_tests: [not_null]
+      - name: classificacao_manchester
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: { values: ["Vermelho", "Laranja", "Amarelo", "Verde", "Azul", "Branco"] }
+      - name: manchester_ordem_criticidade
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: { values: [1, 2, 3, 4, 5, 6], quote: false }
+      - name: procedencia
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["Demanda Espontanea", "Atendimento Primario", "UPA/CRS", "Interior", "Hospital"]
+      - name: sexo
+        data_tests:
+          - accepted_values:
+              arguments: { values: ["Masculino", "Feminino"] }
+      - name: classificacao_faixa_etaria
+        description: "Re-derivado do parametro. Convencao analitica do portfolio; nao e regra clinica."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: { values: ["Pediatrico", "Adulto"] }
+      - name: periodo_admissao
+        data_tests:
+          - accepted_values:
+              arguments: { values: ["Madrugada", "Manha", "Tarde", "Noite"] }
+      - name: desfecho_urgencia
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["Internado", "Liberado", "Evasao", "Obito", "Alta a Pedido",
+                         "Nao informado/Em Atendimento", "Transferido de Hospital"]
+
+  - name: stg_urgencia__eventos
+    description: "Log de eventos operacionais tipado. Grao: 1 linha por evento por atendimento."
+    columns:
+      - name: evento_id
+        data_tests: [not_null, unique]
+      - name: atendimento_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: { to: ref('stg_urgencia__episodios'), field: atendimento_id }
+      - name: tipo_evento
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["retirada_senha", "entrada_urgencia", "inicio_triagem", "fim_triagem",
+                         "inicio_consulta", "abertura_evolucao", "prescricao", "solicitacao_imagem",
+                         "realizacao_imagem", "conduta", "solicitacao_internacao", "finalizacao_aih",
+                         "internacao_efetiva", "desfecho"]
+      - name: dt_evento
+        data_tests: [not_null]

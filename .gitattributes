@@ -1,0 +1,12 @@
+# Normalização de fim de linha — mantém o repositório consistente entre
+# Windows e Linux/macOS. Texto = LF no repositório.
+* text=auto eol=lf
+
+*.py   text eol=lf
+*.sql  text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+*.md   text eol=lf
+*.csv  text eol=lf
+
+*.png  binary
