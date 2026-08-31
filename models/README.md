@@ -36,18 +36,38 @@ Schemas no banco (macro `generate_schema_name` = schema custom "as-is"):
 
 ## Rodar
 
-```bash
-python -m venv .venv && . .venv/Scripts/activate      # Windows (Linux/macOS: source .venv/bin/activate)
+**Windows (PowerShell):**
+
+```powershell
+python -m venv .venv; .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-cp profiles.yml.example profiles.yml                   # perfil local (ignorado pelo Git)
+Copy-Item profiles.yml.example profiles.yml
 
 python scripts/gerar_urgencia_sintetico.py --episodios 12000 --seed 42
 dbt seed  --profiles-dir .
 dbt build --profiles-dir .
 dbt docs generate --profiles-dir .
-python scripts/relatorio_qualidade.py                  # relatório de qualidade
-python scripts/gerar_graficos.py                       # 4 mockups em assets/mockups/
+python scripts/relatorio_qualidade.py
+python scripts/gerar_graficos.py
 ```
+
+**Linux / macOS:**
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cp profiles.yml.example profiles.yml
+
+python scripts/gerar_urgencia_sintetico.py --episodios 12000 --seed 42
+dbt seed  --profiles-dir .
+dbt build --profiles-dir .
+dbt docs generate --profiles-dir .
+python scripts/relatorio_qualidade.py
+python scripts/gerar_graficos.py
+```
+
+`profiles.yml` é uma configuração local do dbt e está no `.gitignore`.
+`dbt build` executa seeds, modelos e testes configurados no projeto
 
 ## Testes
 
