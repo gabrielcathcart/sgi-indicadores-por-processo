@@ -211,5 +211,5 @@ com a área de Qualidade.
 
 ## Contato
 
-**Gabriel Cathcart Araújo** — Enfermeiro · Data Steward · Analista de Dados em Saúde <br>
+**Gabriel Cathcart Araújo** <br> Enfermeiro · Data Steward · Analista de Dados em Saúde <br>
 [LinkedIn](https://www.linkedin.com/in/gabriel-cathcart/) · [GitHub](https://github.com/gabrielcathcart)
