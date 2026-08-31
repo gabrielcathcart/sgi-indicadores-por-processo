@@ -145,7 +145,7 @@ python scripts/gerar_graficos.py
 | [`docs/data_dictionary.md`](./docs/data_dictionary.md) | dicionário: seeds, fato e datasets analíticos |
 | [`docs/metric_definitions.md`](./docs/metric_definitions.md) | os 7 indicadores de tempo: fórmula, população elegível, cobertura |
 | [`docs/data_quality.md`](./docs/data_quality.md) | nulos, sequência inválida, outliers, imperfeições injetadas, testes |
-| [`docs/dashboard.md`](./docs/dashboard.md) | as 4 abas, filtros, referência temporal e roteiro de montagem no Superset |
+| [`docs/dashboard.md`](./docs/dashboard.md) | as 4 abas, filtros, referência temporal, roteiro de montagem no Superset, guia de interpretação e limitações do dashboard |
 | [`docs/parametros.md`](./docs/parametros.md) | corte etário, Manchester, valores de referência de simulação, outliers |
 
 Fichas técnicas: [`indicadores/template_ficha_tecnica.md`](./indicadores/template_ficha_tecnica.md)
