@@ -57,11 +57,6 @@ institucionais**.
 - Os valores de referência de tempo são de **simulação** — servem para demonstrar
   o cálculo de "% acima da referência", não são metas institucionais.
 
-> Este repositório contém apenas a jornada de urgência. Os domínios anteriores —
-> Linha Cirúrgica, Paciente Crítico, análises hospital-wide e a camada SQL
-> pré-dbt — permanecem recuperáveis apenas no histórico local de desenvolvimento
-> e não integram a versão publicada.
-
 ## Arquitetura
 
 ```mermaid
