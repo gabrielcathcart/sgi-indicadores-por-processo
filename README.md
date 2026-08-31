@@ -211,6 +211,5 @@ com a área de Qualidade.
 
 ## Contato
 
-**Gabriel Cathcart Araújo** — Enfermeiro · Data Steward · Analista de Dados em Saúde
-Núcleo de Qualidade e Segurança — Hospital Santa Casa Campo Grande
+**Gabriel Cathcart Araújo** — Enfermeiro · Data Steward · Analista de Dados em Saúde <br>
 [LinkedIn](https://www.linkedin.com/in/gabriel-cathcart/) · [GitHub](https://github.com/gabrielcathcart)
