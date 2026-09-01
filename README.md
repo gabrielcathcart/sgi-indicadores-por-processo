@@ -60,16 +60,23 @@ institucionais**.
 
 ```mermaid
 flowchart LR
-    A["urgencia_episodios_raw.csv<br/>(1 linha/episódio)"] --> S
-    B["urgencia_eventos_raw.csv<br/>(1 linha/evento)"] --> S
-    R["dim_manchester · metas_demo"] --> F
+    A["urgencia_episodios_raw.csv (1 linha/episodio)"] --> S
+    B["urgencia_eventos_raw.csv (1 linha/evento)"] --> S
+    R["dim_manchester + metas_demo"] --> F
+
     subgraph dbt["dbt-core + dbt-duckdb"]
-        S["staging"] --> I["intermediate<br/>eventos · 7 tempos + flags · retorno 72h · formato longo"] --> F["marts<br/><b>fct_urgencia_atendimentos</b><br/>(modelo principal de consumo)"] --> AG["analytics<br/>agg_* / dq_*"]
+        S["staging"]
+        I["intermediate: eventos, 7 tempos, flags, retorno 72h, formato longo"]
+        F["marts: fct_urgencia_atendimentos (modelo principal)"]
+        AG["analytics: agg_ e dq_"]
+        S --> I
+        I --> F
+        F --> AG
     end
-    F --> SU["Apache Superset<br/>(especificação — 4 abas)"]
-    AG --> SU
+
+    AG --> SU["Apache Superset (especificacao, 4 abas)"]
     AG --> PNG["4 mockups (assets/mockups/)"]
-    AG --> REL["relatório de qualidade"]
+    AG --> REL["relatorio de qualidade"]
 ```
 
 Detalhe: [`docs/architecture.md`](./docs/architecture.md) ·
